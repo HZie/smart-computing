@@ -1,4 +1,347 @@
-// Double Dice
+// cha 07 - lab05: Children of Component
+import React from 'react';
+import { View, StyleSheet, Button, Text } from 'react-native';
+
+export default function App() {
+  return (
+    <View style={{ flex: 1, marginTop: 40, alignItems: 'center' }}>
+      <BoxGroup>
+        <Text style={styles.text}>ABCD</Text>
+        <Text style={styles.text}>123</Text>
+        <Button title="OK" />
+      </BoxGroup>
+
+      <BoxGroup>
+        <BoxGroup>
+          <Text style={styles.text}>ABCD</Text>
+          <Button title="OK" />
+        </BoxGroup>
+
+        <BoxGroup>
+          <Text style={styles.text}>123</Text>
+          <Button title="OK" />
+        </BoxGroup>
+      </BoxGroup>
+    </View>
+  );
+}
+
+function BoxGroup(props) {
+  return <View style={styles.box}>{props.children}</View>;
+}
+
+const styles = StyleSheet.create({
+  box: {
+    borderColor: 'blue',
+    borderWidth: 2,
+    margin: 5,
+    padding: 5,
+  },
+  text: {
+    backgroundColor: 'wheat',
+    fontSize: 30,
+    margin: 2,
+    padding: 2,
+  },
+});
+
+/*// ch07 lab04 - TouchableHighlight, TouchableNativeFeedback(Android only)
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Button,
+  TouchableHighlight,
+  TouchableNativeFeedback,
+} from 'react-native';
+
+export default function App() {
+  const [N, setN] = useState(0);
+
+  return (
+    <View style={{ flex: 1, marginTop: 40, alignItems: 'center' }}>
+      <Text style={styles.text}>Touched {N} Times</Text>
+
+      <TouchableHighlight
+        underlayColor="orange"
+        onPress={() => {
+          setN(N + 1);
+        }}
+      >
+        <View>
+          <Text style={[styles.text, styles.button]}>High, Touch Me</Text>
+        </View>
+      </TouchableHighlight>
+
+      <TouchableNativeFeedback
+        onPress={() => {
+          setN(N - 1);
+        }}
+      >
+        <View>
+          <Text style={[styles.text, styles.button]}>
+            NativeFeedback(Android only), Touch Me
+          </Text>
+        </View>
+      </TouchableNativeFeedback>
+
+      <TouchableNativeFeedback
+        background={TouchableNativeFeedback.Ripple('#2196F3')}
+        onPress={() => {
+          setN(N - 1);
+        }}
+      >
+        <View>
+          <Text style={[styles.text, styles.button]}>
+            NativeFeedback backgroundColor, Touch Me
+          </Text>
+        </View>
+      </TouchableNativeFeedback>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  text: {
+    fontSize: 30,
+    padding: 10,
+    margin: 10,
+  },
+  button: {
+    color: 'dodgerblue',
+  },
+});
+*/
+
+/*// ch07 lab02 - TouchableOpacity / lab03 touch Dice to roll
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, Button, TouchableOpacity } from 'react-native';
+
+export default function App() {
+  const [N, setN] = useState(1);
+  const [t, setT] = useState(0);
+
+  return (
+    <View style={{ flex: 1, marginTop: 40 }}>
+      <Text style={styles.text}>Dice</Text>
+      <View style={{ flex: 1, marjinTop: 40, alignItems: 'center' }}>
+        <Text>Touched {t} Times</Text>
+        <TouchableOpacity
+          onPress={() => {
+            setN(Math.floor(Math.random() * 6 + 1));
+            setT(t + 1);
+          }}
+        >
+          <Dice num={N} />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+}
+
+function Circle() {
+  return <View style={styles.circle} />;
+}
+
+function Blank() {
+  return (
+    <View
+      style={[styles.circle, { backgroundColor: undefined, borderWidth: 0 }]}
+    />
+  );
+}
+
+function Dice(props) {
+  switch (props.num) {
+    case 1:
+      return (
+        <View style={styles.dice}>
+          <View style={{ flexDirection: 'row' }}>
+            <Blank />
+            <Blank />
+            <Blank />
+          </View>
+          <View style={{ flexDirection: 'row' }}>
+            <Blank />
+            <Circle />
+            <Blank />
+          </View>
+          <View style={{ flexDirection: 'row' }}>
+            <Blank />
+            <Blank />
+            <Blank />
+          </View>
+        </View>
+      );
+    case 2:
+      return (
+        <View style={styles.dice}>
+          <View style={{ flexDirection: 'row' }}>
+            <Circle />
+            <Blank />
+            <Blank />
+          </View>
+          <View style={{ flexDirection: 'row' }}>
+            <Blank />
+            <Blank />
+            <Blank />
+          </View>
+          <View style={{ flexDirection: 'row' }}>
+            <Blank />
+            <Blank />
+            <Circle />
+          </View>
+        </View>
+      );
+    case 3:
+      return (
+        <View style={styles.dice}>
+          <View style={{ flexDirection: 'row' }}>
+            <Circle />
+            <Blank />
+            <Blank />
+          </View>
+          <View style={{ flexDirection: 'row' }}>
+            <Blank />
+            <Circle />
+            <Blank />
+          </View>
+          <View style={{ flexDirection: 'row' }}>
+            <Blank />
+            <Blank />
+            <Circle />
+          </View>
+        </View>
+      );
+    case 4:
+      return (
+        <View style={styles.dice}>
+          <View style={{ flexDirection: 'row' }}>
+            <Circle />
+            <Blank />
+            <Circle />
+          </View>
+          <View style={{ flexDirection: 'row' }}>
+            <Blank />
+            <Blank />
+            <Blank />
+          </View>
+          <View style={{ flexDirection: 'row' }}>
+            <Circle />
+            <Blank />
+            <Circle />
+          </View>
+        </View>
+      );
+    case 5:
+      return (
+        <View style={styles.dice}>
+          <View style={{ flexDirection: 'row' }}>
+            <Circle />
+            <Blank />
+            <Circle />
+          </View>
+          <View style={{ flexDirection: 'row' }}>
+            <Blank />
+            <Circle />
+            <Blank />
+          </View>
+          <View style={{ flexDirection: 'row' }}>
+            <Circle />
+            <Blank />
+            <Circle />
+          </View>
+        </View>
+      );
+    case 6:
+      return (
+        <View style={styles.dice}>
+          <View style={{ flexDirection: 'row' }}>
+            <Circle />
+            <Blank />
+            <Circle />
+          </View>
+          <View style={{ flexDirection: 'row' }}>
+            <Circle />
+            <Blank />
+            <Circle />
+          </View>
+          <View style={{ flexDirection: 'row' }}>
+            <Circle />
+            <Blank />
+            <Circle />
+          </View>
+        </View>
+      );
+  }
+  return <View></View>;
+}
+
+const styles = StyleSheet.create({
+  text: {
+    textAlign: 'center',
+  },
+  circle: {
+    width: 40,
+    height: 40,
+    backgroundColor: 'black',
+    borderRadius: 20,
+    borderWidth: 1,
+    margin: 2,
+  },
+  dice: {
+    backgroundColor: 'white',
+    padding: 10,
+    borderWidth: 1,
+  },
+});
+*/
+
+/*// ch07 lab01 - make <Mult> component
+import React, { useState } from 'react';
+import { Text, View, TextInput } from 'react-native';
+
+const text_st = {
+  fontSize: 30,
+  padding: 10,
+  margin: 10,
+};
+
+const input_st = {
+  fontSize: 30,
+  borderWidth: 1,
+  padding: 10,
+  margin: 10,
+};
+
+export default function App() {
+  return (
+    <View style={{ paddingTop: 30 }}>
+      <Mult />
+      <Mult />
+      <Mult />
+    </View>
+  );
+}
+
+function Mult() {
+  // 함수 안에서만 사용
+  const [x, setX] = useState(0);
+  const [y, setY] = useState(0);
+
+  return (
+    <View style={{ flexDirection: 'row' }}>
+      <TextInput style={input_st} onChangeText={setX} />
+      <Text style={text_st}> X </Text>
+      <TextInput style={input_st} onChangeText={setY} />
+      <Text style={text_st}>= {Number(x) * Number(y)}</Text>
+    </View>
+  );
+}
+*/
+
+/*// ch06 - Double Dice
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
 
@@ -184,9 +527,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
 });
+*/
 
-/*
-// Roll the Dice
+/*// ch06 - Roll the Dice
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
 
@@ -369,8 +712,7 @@ const styles = StyleSheet.create({
 });
 */
 
-/*
-// piano app
+/*// piano app
 import React, { useState } from 'react';
 import { View, ImageBackground } from 'react-native';
 import { Audio } from 'expo-av';
@@ -534,6 +876,7 @@ async function play12() {
   s.sound.playAsync();
 }
 */
+
 /*ch05 lab2 - add background image
 
 import React from 'react';
@@ -653,8 +996,7 @@ async function play12() {
 }
 */
 
-/*
-//ch04 lab04 - drawer navigator
+/*//ch04 lab04 - drawer navigator
 import React, { useState } from 'react';
 import { Text, View, Button, TextInput, Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
@@ -809,8 +1151,7 @@ function HomeScreen({ navigation }) {
 }
 */
 
-/*
-//ch04 lab03 - add 구구단 screen, add image in about
+/*//ch04 lab03 - add 구구단 screen, add image in about
 import React, { useState } from 'react';
 import { Text, View, Button, TextInput, Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
@@ -965,8 +1306,7 @@ function HomeScreen({ navigation }) {
 }
 */
 
-/*
-//ch04 lab02 - cange Hello --> Hello Ewha
+/*//ch04 lab02 - cange Hello --> Hello Ewha
 import React, { useState } from 'react';
 import { Text, View, Button, TextInput } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
@@ -1047,8 +1387,7 @@ function HomeScreen({ navigation }) {
 }
 */
 
-/*
-//ch04 lab01 - Navigating Screens 
+/*//ch04 lab01 - Navigating Screens 
 import React from 'react';
 import { Text, View, Button } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
@@ -1107,8 +1446,8 @@ function HomeScreen({ navigation }) {
   );
 }
 */
-/*
-// ch03 lab09 - 구구단 using <TextInput>
+
+/*// ch03 lab09 - 구구단 using <TextInput>
 
 import React, { useState } from 'react';
 import { Text, View, TextInput } from 'react-native';
@@ -1144,8 +1483,7 @@ export default function App() {
 }
 */
 
-/*
-// ch03 lab08 - add two numbers
+/*// ch03 lab08 - add two numbers
 import React, { useState } from 'react';
 import { Text, View, TextInput } from 'react-native';
 
@@ -1178,8 +1516,7 @@ export default function App() {
   );
 }*/
 
-/*
-// ch03 lab07 - 구구단 앱
+/*// ch03 lab07 - 구구단 앱
 import React, { useState } from 'react';
 import { Text, View, Button } from 'react-native';
 
@@ -1249,8 +1586,7 @@ export default function App() {
 }
 */
 
-/*
-// ch03 lab06 - Two Counters
+/*// ch03 lab06 - Two Counters
 import React, { useState } from 'react';
 import { Text, View, Button } from 'react-native';
 
@@ -1310,8 +1646,7 @@ export default function App() {
 }
 */
 
-/*
-// ch03 lab05 - Counter App
+/*// ch03 lab05 - Counter App
 import React, { useState } from 'react';
 import { Text, View, Button } from 'react-native';
 
@@ -1345,8 +1680,8 @@ export default function App() {
   );
 }
 */
-/*
-// ch03 lab04 - Hello, Name(chap03 lab2 + lab3a)
+
+/*// ch03 lab04 - Hello, Name(chap03 lab2 + lab3a)
 import React, { useState } from 'react';
 import { Text, View, Button, TextInput } from 'react-native';
 
@@ -1386,9 +1721,8 @@ export default function App() {
   );
 }
 */
-/*
 
-// chap03 Text Input
+/*// chap03 Text Input
 import React, { useState } from 'react';
 import { Text, View, Button, TextInput } from 'react-native';
 
@@ -1413,8 +1747,7 @@ export default function App() {
 
  */
 
-/*
-// chap02 카운터 앱
+/*// chap02 카운터 앱
 import React, { useState } from 'react';
 import { Text, View, Button } from 'react-native';
 
@@ -1450,7 +1783,7 @@ export default function App() {
 }
 */
 
-/*
+/* //ch 01 - Hello World
 import React, { useState } from 'react';
 import { Text, View, Button } from 'react-native';
 
