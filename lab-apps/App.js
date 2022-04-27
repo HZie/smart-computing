@@ -1,4 +1,498 @@
-// cha 07 - lab05: Children of Component
+// ch08 lab03c&d - Touch image to take picture & Each image takes picture
+import React, { useState, useEffect } from 'react';
+import {
+  StyleSheet,
+  Image,
+  View,
+  Button,
+  TouchableOpacity,
+} from 'react-native';
+import { Camera } from 'expo-camera';
+
+async function get_perm() {
+  const { status } = await Camera.requestCameraPermissionsAsync();
+  if (status !== 'granted') {
+    alert('We need camera permissions');
+  }
+}
+
+let cam;
+
+export default function App() {
+  const [type, setType] = useState(Camera.Constants.Type.back);
+  const [img1, setImg1] = useState(null);
+  const [img2, setImg2] = useState(null);
+  const [img3, setImg3] = useState(null);
+  const [img4, setImg4] = useState(null);
+
+  async function takePic(setImg) {
+    let photo = await cam.takePictureAsync();
+    console.log(photo);
+    setImg(photo.uri);
+  }
+
+  useEffect(() => {
+    get_perm();
+  }, []);
+
+  return (
+    <View style={styles.container}>
+      <Camera
+        style={styles.camera}
+        ref={(r) => {
+          cam = r;
+        }}
+        type={type}
+      >
+        <View style={styles.buttonContainer}>
+          <Button
+            title="Front"
+            onPress={() => {
+              setType(Camera.Constants.Type.front);
+            }}
+          />
+          <View style={{ width: 10 }} />
+          <Button
+            title="Back"
+            onPress={() => {
+              setType(Camera.Constants.Type.back);
+            }}
+          />
+        </View>
+      </Camera>
+
+      <View style={styles.imageContainer}>
+        <TouchableOpacity
+          onPress={() => {
+            takePic(1);
+          }}
+          style={styles.image}
+        >
+          <Image source={{ uri: img1 }} style={{ flex: 1 }} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            takePic(setImg2);
+          }}
+          style={styles.image}
+        >
+          <Image source={{ uri: img2 }} style={{ flex: 1 }} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            takePic(setImg3);
+          }}
+          style={styles.image}
+        >
+          <Image source={{ uri: img3 }} style={{ flex: 1 }} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            takePic(setImg4);
+          }}
+          style={styles.image}
+        >
+          <Image source={{ uri: img4 }} style={{ flex: 1 }} />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+  camera: { width: '100%', aspectRatio: 0.75, flexDirection: 'column-reverse' },
+  buttonContainer: {
+    flexDirection: 'row',
+    margin: 10,
+  },
+  image: { backgroundColor: 'grey', width: '25%', aspectRatio: 0.75 },
+  imageContainer: {
+    flexDirection: 'row',
+    margin: 10,
+  },
+});
+
+/*// ch08 lab03b - UI can go inside Camera
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Image, View, Button } from 'react-native';
+import { Camera } from 'expo-camera';
+
+async function get_perm() {
+  const { status } = await Camera.requestCameraPermissionsAsync();
+  if (status !== 'granted') {
+    alert('We need camera permissions');
+  }
+}
+
+let cam;
+
+export default function App() {
+  const [type, setType] = useState(Camera.Constants.Type.back);
+  let [img, setImg] = useState(null);
+
+  async function takePic() {
+    let photo = await cam.takePictureAsync();
+    console.log(photo);
+    setImg(photo.uri);
+  }
+
+  useEffect(() => {
+    get_perm();
+  }, []);
+
+  return (
+    <View style={styles.container}>
+      <Camera
+        style={styles.camera}
+        ref={(r) => {
+          cam = r;
+        }}
+        type={type}
+      >
+        <View style={styles.buttonContainer}>
+          <Button
+            title="Front"
+            onPress={() => {
+              setType(Camera.Constants.Type.front);
+            }}
+          />
+          <View style={{ width: 10 }} />
+          <Button
+            title="Back"
+            onPress={() => {
+              setType(Camera.Constants.Type.back);
+            }}
+          />
+          <View style={{ width: 10 }} />
+          <Button title="Take" onPress={takePic} />
+        </View>
+      </Camera>
+      <Image source={{ uri: img }} style={styles.image} />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+  camera: { width: '100%', aspectRatio: 0.75, flexDirection: 'column-reverse' },
+  buttonContainer: {
+    flexDirection: 'row',
+    margin: 10,
+  },
+  image: { backgroundColor: 'grey', width: '25%', aspectRatio: 0.75 },
+});
+*/
+
+/*// ch08 lab03 - Using Camera
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Image, View, Button } from 'react-native';
+import { Camera } from 'expo-camera';
+
+async function get_perm() {
+  const { status } = await Camera.requestCameraPermissionsAsync();
+  if (status !== 'granted') {
+    alert('We need camera permissions');
+  }
+}
+
+let cam;
+
+export default function App() {
+  const [type, setType] = useState(Camera.Constants.Type.back);
+  let [img, setImg] = useState(null);
+
+  async function takePic() {
+    let photo = await cam.takePictureAsync();
+    console.log(photo);
+    setImg(photo.uri);
+  }
+
+  useEffect(() => {
+    get_perm();
+  }, []);
+
+  return (
+    <View style={styles.container}>
+      <Camera
+        style={styles.camera}
+        ref={function (r) {
+          cam = r;
+        }}
+        type={type}
+      ></Camera>
+      <View style={styles.buttonContainer}>
+        <Button
+          title="Front"
+          onPress={() => {
+            setType(Camera.Constants.Type.front);
+          }}
+        />
+        <View style={{ width: 10 }} />
+        <Button
+          title="Back"
+          onPress={() => {
+            setType(Camera.Constants.Type.back);
+          }}
+        />
+        <Button title="Take" onPress={takePic} />
+      </View>
+      <Image source={{ uri: img }} style={styles.image} />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+  camera: { width: '100%', aspectRatio: 0.75 },
+  buttonContainer: {
+    flexDirection: 'row',
+    margin: 10,
+  },
+  image: { backgroundColor: 'grey', width: '25%', aspectRatio: 0.75 },
+});
+*/
+
+/*// ch08 lab02 c - Touch image to pick, using TouchableOpacity
+import React, { useState, useEffect } from 'react';
+import { Button, Image, Text, View, TouchableOpacity } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
+import { Platform } from 'expo-modules-core';
+
+export default function ImagePickerExample() {
+  const [img1, setImg1] = useState(null);
+  const [img2, setImg2] = useState(null);
+
+  useEffect(() => {
+    get_perm();
+  }, []);
+
+  async function pickImg1() {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.cancelled) {
+      setImg1(result.uri);
+    }
+  }
+
+  async function pickImg2() {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.cancelled) {
+      setImg2(result.uri);
+    }
+  }
+
+  return (
+    <View
+      style={{ flex: 1, alignItems: 'center', justifyContent: 'space-evenly' }}
+    >
+      <TouchableOpacity onPress={pickImg1}>
+        <Image
+          source={{ uri: img1 }}
+          style={{ backgroundColor: 'grey', width: 240, height: 240 }}
+        />
+      </TouchableOpacity>
+      <TouchableOpacity onPress={pickImg2}>
+        <Image
+          source={{ uri: img2 }}
+          style={{ backgroundColor: 'grey', width: 240, height: 240 }}
+        />
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+async function get_perm() {
+  if (Platform.OS !== 'web') {
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    console.log(status);
+    if (status !== 'granted') {
+      alert('We need camera roll permissions');
+    }
+  }
+}
+*/
+
+/*// ch08 lab 02b - pick two images
+import React, { useState, useEffect } from 'react';
+import { Button, Image, Text, View } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
+import { Platform } from 'expo-modules-core';
+
+export default function ImagePickerExample() {
+  const [img1, setImg1] = useState(null);
+  const [img2, setImg2] = useState(null);
+
+  useEffect(() => {
+    get_perm();
+  }, []);
+
+  async function pickImg1() {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.cancelled) {
+      setImg1(result.uri);
+    }
+  }
+
+  async function pickImg2() {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.cancelled) {
+      setImg2(result.uri);
+    }
+  }
+
+  return (
+    <View
+      style={{ flex: 1, alignItems: 'center', justifyContent: 'space-evenly' }}
+    >
+      <Button title="Pick an Image1" onPress={pickImg1} />
+      <Image source={{ uri: img1 }} style={{ width: 240, height: 240 }} />
+      <Button title="Pick an Image2" onPress={pickImg2} />
+      <Image source={{ uri: img2 }} style={{ width: 240, height: 240 }} />
+    </View>
+  );
+}
+
+async function get_perm() {
+  if (Platform.OS !== 'web') {
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    console.log(status);
+    if (status !== 'granted') {
+      alert('We need camera roll permissions');
+    }
+  }
+}*/
+
+/* // ch 08 lab 2a - get image from photo gallery
+import React, { useState, useEffect } from 'react';
+import { Button, Image, Text, View } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
+import { Platform } from 'expo-modules-core';
+
+const text_st = {
+  width: 100,
+  fontSize: 30,
+  backgroundColor: 'lightgrey',
+  padding: 10,
+  margin: 20,
+};
+
+export default function ImagePickerExample() {
+  const [img, setImg] = useState(null);
+
+  useEffect(() => {
+    get_perm();
+  }, []);
+
+  async function pickImg() {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [3, 4],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.cancelled) {
+      setImg(result.uri);
+    }
+  }
+
+  return (
+    <View
+      style={{ flex: 1, alignItems: 'center', justifyContent: 'space-evenly' }}
+    >
+      <Button title="Pick an Image" onPress={pickImg} />
+      <Image source={{ uri: img }} style={{ width: 300, height: 400 }} />
+    </View>
+  );
+}
+
+async function get_perm() {
+  if (Platform.OS !== 'web') {
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    console.log(status);
+    if (status !== 'granted') {
+      alert('We need camera roll permissions');
+    }
+  }
+}
+*/
+
+/* // ch 08 lab 01 - useEffect
+import React, { useState, useEffect } from 'react';
+import { Button, Image, Text, View, Button } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
+
+const text_st = {
+  width: 100,
+  fontSize: 30,
+  backgroundColor: 'lightgrey',
+  padding: 10,
+  margin: 20,
+};
+
+export default function App() {
+  const [val, setVal] = useState(0);
+
+  useEffect(() => {
+    console.log('this is side effect', val);
+  });
+
+  return (
+    <View style={{ marginTop: 30, alignItems: 'center' }}>
+      <Text style={text_st}>{val}</Text>
+      <Button
+        title="Count up"
+        onPress={() => {
+          setVal(val + 1);
+        }}
+      />
+      <View style={{ height: 10 }} />
+      <Button
+        title="Count Down"
+        onPress={() => {
+          setVal(val - 1);
+        }}
+      />
+    </View>
+  );
+}
+*/
+
+/* // ch 07 lab05 - Children of Component
 import React from 'react';
 import { View, StyleSheet, Button, Text } from 'react-native';
 
@@ -44,6 +538,8 @@ const styles = StyleSheet.create({
     padding: 2,
   },
 });
+
+*/
 
 /*// ch07 lab04 - TouchableHighlight, TouchableNativeFeedback(Android only)
 import React, { useState } from 'react';
