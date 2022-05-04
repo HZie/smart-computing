@@ -1,4 +1,331 @@
-// ch08 lab03c&d - Touch image to take picture & Each image takes picture
+// ch09 lab04 - Seperate Screen
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import CalendarPicker from 'react-native-calendar-picker';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+
+const Stack = createStackNavigator();
+
+export default function App() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Memo" component={MemoScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
+
+function HomeScreen({ navigation }) {
+  async function date_change(d) {
+    console.log(d.format('YYYYMMDD'));
+    let date = d.format('YYYYMMDD');
+
+    let val_expense = '';
+    let val_memo = '';
+
+    let value = await AsyncStorage.getItem(date);
+    let value_m = await AsyncStorage.getItem(date + 'm');
+
+    console.log(value);
+
+    if (value !== null) {
+      val_expense = value;
+      val_memo = value_m;
+    }
+
+    navigation.navigate('Memo', {
+      date: d,
+      expense: val_expense,
+      memo: val_memo,
+    });
+  }
+
+  return (
+    <View style={styles.container}>
+      <CalendarPicker onDateChange={date_change} />
+    </View>
+  );
+}
+
+function MemoScreen({ route, navigation }) {
+  let d = route.params.date;
+
+  const [date, setDate] = useState(d.format('YYYYMMDD'));
+  const [date1, setDate1] = useState(d.format('MMMM DD, YYYY'));
+  const [expense, setExpense] = useState(route.params.expense);
+  const [memo, setMemo] = useState(route.params.memo);
+
+  async function save_memo() {
+    console.log(date);
+    await AsyncStorage.setItem(date, expense);
+    await AsyncStorage.setItem(date + 'm', memo);
+    navigation.navigate('Home');
+  }
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.datetext}>{date1}</Text>
+      <View style={styles.row}>
+        <Text style={styles.text}>Expense: </Text>
+        <TextInput
+          style={styles.expense}
+          keyboardType="numeric"
+          onChangeText={setExpense}
+          value={expense}
+        />
+        <Button title="Save" onPress={save_memo} />
+      </View>
+      <TextInput
+        style={styles.memo}
+        placeholder="Memo"
+        onChangeText={setMemo}
+        value={memo}
+      />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    margin: 40,
+  },
+  box: {
+    margin: 20,
+  },
+  datetext: {
+    fontSize: 20,
+    marginVertical: 10,
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  text: { fontSize: 16 },
+  expense: {
+    flex: 1,
+    borderBottomWidth: 1,
+    fontSize: 16,
+    marginTop: 10,
+    color: 'blue',
+  },
+  memo: { borderBottomWidth: 1, fontSize: 16, marginTop: 10, color: 'blue' },
+});
+
+/*// ch09 lab03 - saving to Key-Value
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import CalendarPicker from 'react-native-calendar-picker';
+
+export default function App() {
+  const [date, setDate] = useState('');
+  const [date1, setDate1] = useState('');
+  const [expense, setExpense] = useState('');
+  const [memo, setMemo] = useState('');
+
+  async function onDateChange(d) {
+    console.log(d.format('YYYYMMDD'));
+    setDate(d.format('YYYYMMDD'));
+    setDate1(d.format('MMMM DD, YYYY'));
+
+    let key = d.format('YYYYMMDD');
+    let value = await AsyncStorage.getItem(key);
+    let value_m = await AsyncStorage.getItem(key + 'm');
+
+    console.log(value);
+
+    if (value !== null) {
+      setExpense(value);
+      setMemo(value_m);
+    } else {
+      setExpense('');
+      setMemo('');
+    }
+  }
+
+  async function save_memo() {
+    await AsyncStorage.setItem(date, expense);
+    await AsyncStorage.setItem(date + 'm', memo);
+  }
+
+  return (
+    <View style={styles.container}>
+      <CalendarPicker onDateChange={onDateChange} />
+      <View style={styles.box}>
+        <Text style={styles.datetext}>{date1}</Text>
+        <View style={styles.row}>
+          <Text style={styles.text}>Expense: </Text>
+          <TextInput
+            style={styles.expense}
+            keyboardType="numeric"
+            onChangeText={setExpense}
+            value={expense}
+          />
+          <Button title="Save" onPress={save_memo} />
+        </View>
+        <TextInput
+          style={styles.memo}
+          placeholder="Memo"
+          onChangeText={setMemo}
+          value={memo}
+        />
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    marginTop: 40,
+  },
+  box: {
+    margin: 20,
+  },
+  datetext: {
+    fontSize: 20,
+    marginVertical: 10,
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  text: { fontSize: 16 },
+  expense: {
+    flex: 1,
+    borderBottomWidth: 1,
+    fontSize: 16,
+    marginTop: 10,
+    color: 'blue',
+  },
+  memo: { borderBottomWidth: 1, fontSize: 16, marginTop: 10, color: 'blue' },
+});
+*/
+
+/*// ch09 lab02 - Add Memo UI
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
+import CalendarPicker from 'react-native-calendar-picker';
+
+export default function App() {
+  const [date, setDate] = useState('');
+  const [date1, setDate1] = useState('');
+  const [expense, setExpense] = useState('');
+  const [memo, setMemo] = useState('');
+
+  function onDateChange(d) {
+    console.log(d);
+    console.log(d.toString());
+    console.log(d.format('YYYYMMDD'));
+    console.log(d.format('MMMM DD, YYYY'));
+
+    setDate(d.format('YYYYMMDD'));
+    setDate1(d.format('MMMM DD, YYYY'));
+  }
+
+  return (
+    <View style={styles.container}>
+      <CalendarPicker onDateChange={onDateChange} />
+      <View style={styles.box}>
+        <Text style={styles.datetext}>{date1}</Text>
+        <View style={styles.row}>
+          <Text style={styles.text}>Expense</Text>
+          <TextInput
+            style={styles.expense}
+            keyboardType="numeric"
+            onChangeText={setExpense}
+          />
+          <Button title="Save" />
+        </View>
+        <TextInput
+          style={styles.memo}
+          placeholder="Memo"
+          onChangeText={setMemo}
+        />
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    marginTop: 40,
+  },
+  box: {
+    margin: 20,
+  },
+  datetext: {
+    fontSize: 20,
+    marginVertical: 10,
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  text: { fontSize: 16 },
+  expense: {
+    flex: 1,
+    borderBottomWidth: 1,
+    fontSize: 16,
+    marginTop: 10,
+    color: 'blue',
+  },
+  memo: { borderBottomWidth: 1, fontSize: 16, marginTop: 10, color: 'blue' },
+});
+*/
+
+/*// ch09 lab01 - create calendar
+import React, { useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import CalendarPicker from 'react-native-calendar-picker';
+
+export default function App() {
+  const [date, setDate] = useState('');
+  const [date1, setDate1] = useState('');
+
+  function onDateChange(d) {
+    console.log(d);
+    console.log(d.toString());
+    console.log(d.format('YYYYMMDD'));
+    console.log(d.format('MMMM DD, YYYY'));
+
+    setDate(d.format('YYYYMMDD'));
+    setDate1(d.format('MMMM DD, YYYY'));
+  }
+
+  return (
+    <View style={styles.container}>
+      <CalendarPicker onDateChange={onDateChange} />
+      <View style={styles.box}>
+        <Text>Date: {date}</Text>
+        <Text style={styles.text}>{date1}</Text>
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    marginTop: 40,
+  },
+  box: {
+    margin: 20,
+  },
+  text: {
+    fontSize: 20,
+    marginVertical: 10,
+  },
+});
+*/
+
+/*// ch08 lab03c&d - Touch image to take picture & Each image takes picture
 import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
@@ -112,6 +439,7 @@ const styles = StyleSheet.create({
     margin: 10,
   },
 });
+*/
 
 /*// ch08 lab03b - UI can go inside Camera
 import React, { useState, useEffect } from 'react';
