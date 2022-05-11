@@ -1,4 +1,330 @@
-// ch09 lab04 - Seperate Screen
+// ch11 lab02 - move the ball : To Do
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { Accelerometer } from 'expo-sensors';
+
+export default function App() {
+  const [data, setData] = useState({ x: 0, y: 0, z: 0 });
+
+  function _slow() {
+    Accelerometer.setUpdateInterval(1000);
+  }
+
+  function _fast() {
+    Accelerometer.setUpdateInterval(40);
+  }
+
+  function _subscribe() {
+    Accelerometer.addListener((d) => {
+      setData(d);
+    });
+  }
+
+  useEffect(() => {
+    _subscribe();
+  }, []);
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.text}>Accelerometer: </Text>
+      <Text style={styles.text}>
+        x: {data.x.toFixed(3)} y: {data.y.toFixed(3)} z: {data.z.toFixed(3)}
+      </Text>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity onPress={_slow} style={styles.button}>
+          <Text style={styles.button}>Slow</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={_fast} style={styles.button}>
+          <Text style={styles.button}>Fast</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, marginTop: 40 },
+  text: { fontSize: 20 },
+  buttonContainer: { margin: 10 },
+  button: { fontSize: 20, color: 'blue', margin: 5 },
+});
+
+/*// ch11 lab01 - Read Accelerometer sensor
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { Accelerometer } from 'expo-sensors';
+
+export default function App() {
+  const [data, setData] = useState({ x: 0, y: 0, z: 0 });
+
+  function _slow() {
+    Accelerometer.setUpdateInterval(1000);
+  }
+
+  function _fast() {
+    Accelerometer.setUpdateInterval(40);
+  }
+
+  function _subscribe() {
+    Accelerometer.addListener((d) => {
+      setData(d);
+    });
+  }
+
+  useEffect(() => {
+    _subscribe();
+  }, []);
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.text}>Accelerometer: </Text>
+      <Text style={styles.text}>
+        x: {data.x.toFixed(3)} y: {data.y.toFixed(3)} z: {data.z.toFixed(3)}
+      </Text>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity onPress={_slow} style={styles.button}>
+          <Text style={styles.button}>Slow</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={_fast} style={styles.button}>
+          <Text style={styles.button}>Fast</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, marginTop: 40 },
+  text: { fontSize: 20 },
+  buttonContainer: { margin: 10 },
+  button: { fontSize: 20, color: 'blue', margin: 5 },
+});*/
+
+/* // ch10 lab04 - forecast (3시간 간격, up to 5 days)
+
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, Image } from 'react-native';
+
+let url =
+  'http://api.openweathermap.org/data/2.5/forecast?q=Seoul&units=metric&appid=11433258b0a9e0e79d3cc1ada5bcd366';
+let st_text = { fontSize: 10 };
+
+export default function App() {
+  const [date, setDate] = useState([]);
+  const [temp, setTemp] = useState([]);
+  const [weather, setWeather] = useState([]);
+  const [icon, setIcon] = useState([]);
+
+  useEffect(() => {
+    fetch(url)
+      .then((response) => {
+        return response.json();
+      })
+      .then((json) => {
+        for (let i = 0; i < 5; i++) {
+          setDate((date) => [...date, json.list[i * 8].dt_txt]);
+          setTemp((temp) => [...temp, json.list[i * 8].main.temp]);
+          setWeather((weather) => [
+            ...weather,
+            json.list[i * 8].weather[0].description,
+          ]);
+          setIcon((icon) => [
+            ...icon,
+            'http://openweathermap.org/img/w/' +
+              json.list[i * 8].weather[0].icon +
+              '.png',
+          ]);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
+
+  function WeatherView(props) {
+    const index = props.idx;
+    return (
+      <View>
+        <Text style={st_text}>Date: {date[index]}</Text>
+        <Text style={st_text}>Temp: {temp[index]}</Text>
+        <Text style={st_text}>Weather: {weather[index]}</Text>
+        <Image
+          style={{ width: 50, height: 50 }}
+          source={{ url: icon[index] }}
+        />
+      </View>
+    );
+  }
+
+  return (
+    <View style={{ flex: 1, marginTop: 30, padding: 20 }}>
+      <WeatherView idx={0} />
+      <WeatherView idx={1} />
+      <WeatherView idx={2} />
+      <WeatherView idx={3} />
+      <WeatherView idx={4} />
+    </View>
+  );
+}*/
+
+/* // ch10 lab03 - Add weather icon
+
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, Image } from 'react-native';
+
+let url =
+  'http://api.openweathermap.org/data/2.5/weather?q=Seoul&units=metric&appid=11433258b0a9e0e79d3cc1ada5bcd366';
+let st_text = { fontSize: 20 };
+
+export default function App() {
+  const [city, setCity] = useState('');
+  const [country, setCountry] = useState('');
+  const [temp, setTemp] = useState('');
+  const [weather, setWeather] = useState('');
+  const [wind, setWind] = useState('');
+  const [icon, setIcon] = useState('');
+
+  useEffect(() => {
+    fetch(url)
+      .then((response) => {
+        return response.json();
+      })
+      .then((json) => {
+        console.log(json);
+        setCity(json.name);
+        setCountry(json.sys.country);
+        setTemp(json.main.temp);
+        setWeather(json.weather[0].description);
+        setWind(json.wind.speed);
+        setIcon(
+          'http://openweathermap.org/img/w/' + json.weather[0].icon + '.png'
+        );
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
+  return (
+    <View style={{ flex: 1, marginTop: 30, padding: 20 }}>
+      <Text style={st_text}>City: {city}</Text>
+      <Text style={st_text}>Country: {country}</Text>
+      <Text style={st_text}>Temp: {temp}</Text>
+      <Text style={st_text}>Weather: {weather}</Text>
+      <Text style={st_text}>Wind: {wind}</Text>
+      <Image style={{ width: 100, height: 100 }} source={{ url: icon }} />
+    </View>
+  );
+}*/
+
+/* // ch10 lab02 - Read weather data from JSON
+
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
+
+let url =
+  'http://api.openweathermap.org/data/2.5/weather?q=Seoul&units=metric&appid=11433258b0a9e0e79d3cc1ada5bcd366';
+let st_text = { fontSize: 20 };
+
+export default function App() {
+  const [city, setCity] = useState('');
+  const [country, setCountry] = useState('');
+  const [temp, setTemp] = useState('');
+  const [weather, setWeather] = useState('');
+  const [wind, setWind] = useState('');
+
+  useEffect(() => {
+    fetch(url)
+      .then((response) => {
+        return response.json();
+      })
+      .then((json) => {
+        console.log(json);
+        setCity(json.name);
+        setCountry(json.sys.country);
+        setTemp(json.main.temp);
+        setWeather(json.weather[0].description);
+        setWind(json.wind.speed);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
+  return (
+    <View style={{ flex: 1, marginTop: 30, padding: 20 }}>
+      <Text style={st_text}>City: {city}</Text>
+      <Text style={st_text}>Country: {country}</Text>
+      <Text style={st_text}>Temp: {temp}</Text>
+      <Text style={st_text}>Weather: {weather}</Text>
+      <Text style={st_text}>Wind: {wind}</Text>
+    </View>
+  );
+}*/
+
+/* // ch10 lab01a - get data
+
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
+
+let url =
+  'http://api.openweathermap.org/data/2.5/weather?q=Seoul&units=metric&appid=11433258b0a9e0e79d3cc1ada5bcd366';
+
+export default function App() {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    fetch(url)
+      .then((response) => {
+        return response.json();
+      })
+      .then((json) => {
+        console.log(json);
+        setData(json);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
+  return (
+    <View style={{ flex: 1, marginTop: 30, padding: 20 }}>
+      <Text>{JSON.stringify(data)}</Text>
+    </View>
+  );
+}*/
+
+/* // ch10 lab01 - get data
+
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
+
+export default function App() {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    fetch(
+      'http://api.openweathermap.org/data/2.5/weather?q=Seoul&appid=11433258b0a9e0e79d3cc1ada5bcd366'
+    )
+      .then((response) => {
+        return response.json();
+      })
+      .then((json) => {
+        console.log(json);
+        setData(json);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
+  return (
+    <View style={{ flex: 1, marginTop: 30, padding: 20 }}>
+      <Text>{JSON.stringify(data)}</Text>
+    </View>
+  );
+}*/
+
+/* // ch09 lab04 - Seperate Screen
+
+// navigation ide: https://reactnavigation.org/docs/params/
+
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -114,7 +440,7 @@ const styles = StyleSheet.create({
     color: 'blue',
   },
   memo: { borderBottomWidth: 1, fontSize: 16, marginTop: 10, color: 'blue' },
-});
+}); */
 
 /*// ch09 lab03 - saving to Key-Value
 import React, { useState } from 'react';
