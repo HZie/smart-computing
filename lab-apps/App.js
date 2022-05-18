@@ -555,7 +555,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
 
 let url =
-  'http://api.openweathermap.org/data/2.5/forecast?q=Seoul&units=metric&appid=11433258b0a9e0e79d3cc1ada5bcd366';
+  'http://api.openweathermap.org/data/2.5/forecast?q=Seoul&units=metric&appid=에이피아이 아이디';
 let st_text = { fontSize: 10 };
 
 export default function App() {
@@ -622,7 +622,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
 
 let url =
-  'http://api.openweathermap.org/data/2.5/weather?q=Seoul&units=metric&appid=11433258b0a9e0e79d3cc1ada5bcd366';
+  'http://api.openweathermap.org/data/2.5/weather?q=Seoul&units=metric&appid=에이피아이 아이디';
 let st_text = { fontSize: 20 };
 
 export default function App() {
@@ -671,7 +671,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
 
 let url =
-  'http://api.openweathermap.org/data/2.5/weather?q=Seoul&units=metric&appid=11433258b0a9e0e79d3cc1ada5bcd366';
+  'http://api.openweathermap.org/data/2.5/weather?q=Seoul&units=metric&appid=에이피아이 아이디';
 let st_text = { fontSize: 20 };
 
 export default function App() {
@@ -715,7 +715,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
 
 let url =
-  'http://api.openweathermap.org/data/2.5/weather?q=Seoul&units=metric&appid=11433258b0a9e0e79d3cc1ada5bcd366';
+  'http://api.openweathermap.org/data/2.5/weather?q=Seoul&units=metric&appid=에이피아이 아이디';
 
 export default function App() {
   const [data, setData] = useState([]);
@@ -750,7 +750,7 @@ export default function App() {
 
   useEffect(() => {
     fetch(
-      'http://api.openweathermap.org/data/2.5/weather?q=Seoul&appid=11433258b0a9e0e79d3cc1ada5bcd366'
+      'http://api.openweathermap.org/data/2.5/weather?q=Seoul&appid=에이피아이 아이디'
     )
       .then((response) => {
         return response.json();
