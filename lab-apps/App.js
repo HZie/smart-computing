@@ -1,4 +1,452 @@
-// ch11 lab02 - move the ball : To Do
+// ch12 lab07 - Select, and delete
+import React, { useState } from 'react';
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  TouchableOpacity,
+} from 'react-native';
+import { TextInput } from 'react-native-gesture-handler';
+
+export default function App() {
+  const [name, setName] = useState('');
+  const [key, setKey] = useState('');
+  const [extra, setExtra] = useState(false);
+  const [sel, setSel] = useState(null);
+
+  return (
+    <View style={styles.container}>
+      <View style={{ margin: 10, flexDirection: 'row' }}>
+        <TextInput style={styles.input} onChangeText={setKey} />
+        <TextInput style={styles.input} onChangeText={setName} />
+        <Button
+          title="Add"
+          onPress={() => {
+            datalist.push({ key: key, name: name });
+            setExtra(!extra);
+          }}
+        />
+        <View style={{ width: 5 }} />
+        <Button
+          title="Del"
+          onPress={() => {
+            if (sel != null) datalist.splice(sel, 1);
+            setSel(null);
+            setExtra(!extra);
+          }}
+        />
+      </View>
+      <FlatList
+        data={datalist}
+        extraData={extra}
+        keyExtractor={(item) => item.num}
+        renderItem={({ item, index }) => {
+          const color = index === sel ? 'red' : 'black';
+          return (
+            <TouchableOpacity
+              style={styles.item}
+              onPress={() => {
+                setSel(index);
+                setExtra(!extra);
+              }}
+            >
+              <Text style={styles.age}>{item.key}</Text>
+              <Text style={[styles.text, { color }]}>{item.name}</Text>
+            </TouchableOpacity>
+          );
+        }}
+      />
+    </View>
+  );
+}
+
+let datalist = [
+  { num: '01', name: 'Devin' },
+  { num: '02', name: 'Dan' },
+  { num: '03', name: 'Dominic' },
+  { num: '04', name: 'Jackson' },
+  { num: '05', name: 'James' },
+  { num: '06', name: 'Joel' },
+  { num: '07', name: 'John' },
+  { num: '08', name: 'Jilian' },
+  { num: '09', name: 'Jimmy' },
+  { num: '10', name: 'Julie' },
+  { num: '11', name: 'Jay' },
+  { num: '12', name: 'Ewha' },
+];
+
+const styles = StyleSheet.create({
+  container: { flex: 1, paddingTop: 22 },
+  item: {
+    padding: 10,
+    margin: 10,
+    flexDirection: 'row',
+    backgroundColor: 'lightblue',
+  },
+  text: { fontSize: 30, marginHorizontal: 10 },
+  age: { fontSize: 15, color: 'blue', marginVertical: 10 },
+  input: { flex: 1, fontSize: 30, borderWidth: 1, marginHorizontal: 5 },
+});
+
+/* // ch12 lab06 - if no key, or id
+import React, { useState } from 'react';
+import { FlatList, StyleSheet, Text, View, Button } from 'react-native';
+import { TextInput } from 'react-native-gesture-handler';
+
+export default function App() {
+  const [name, setName] = useState('');
+  const [key, setKey] = useState('');
+  const [extra, setExtra] = useState(false);
+
+  return (
+    <View style={styles.container}>
+      <View style={{ margin: 10, flexDirection: 'row' }}>
+        <TextInput style={styles.input} onChangeText={setKey} />
+        <TextInput style={styles.input} onChangeText={setName} />
+        <Button
+          title="Add"
+          onPress={() => {
+            datalist.push({ key: key, name: name });
+            setExtra(!extra);
+          }}
+        />
+        <View style={{ width: 5 }} />
+        <Button
+          title="Del"
+          onPress={() => {
+            datalist.pop();
+            setExtra(!extra);
+          }}
+        />
+      </View>
+      <FlatList
+        data={datalist}
+        extraData={extra}
+        keyExtractor={(item) => item.num}
+        renderItem={({ item }) => {
+          return (
+            <View style={styles.item}>
+              <Text style={styles.age}>{item.key}</Text>
+              <Text style={styles.text}>{item.name}</Text>
+            </View>
+          );
+        }}
+      />
+    </View>
+  );
+}
+
+let datalist = [
+  { num: '01', name: 'Devin' },
+  { num: '02', name: 'Dan' },
+  { num: '03', name: 'Dominic' },
+  { num: '04', name: 'Jackson' },
+  { num: '05', name: 'James' },
+  { num: '06', name: 'Joel' },
+  { num: '07', name: 'John' },
+  { num: '08', name: 'Jilian' },
+  { num: '09', name: 'Jimmy' },
+  { num: '10', name: 'Julie' },
+  { num: '11', name: 'Jay' },
+  { num: '12', name: 'Ewha' },
+];
+
+const styles = StyleSheet.create({
+  container: { flex: 1, paddingTop: 22 },
+  item: {
+    padding: 10,
+    margin: 10,
+    flexDirection: 'row',
+    backgroundColor: 'lightblue',
+  },
+  text: { fontSize: 30, marginHorizontal: 10 },
+  age: { fontSize: 15, color: 'blue', marginVertical: 10 },
+  input: { flex: 1, fontSize: 30, borderWidth: 1, marginHorizontal: 5 },
+});
+*/
+
+/* // ch12 lab05 - refresh by extraData
+import React, { useState } from 'react';
+import { FlatList, StyleSheet, Text, View, Button } from 'react-native';
+import { TextInput } from 'react-native-gesture-handler';
+
+export default function App() {
+  const [name, setName] = useState('');
+  const [key, setKey] = useState('');
+  const [extra, setExtra] = useState(false);
+
+  return (
+    <View style={styles.container}>
+      <View style={{ margin: 10, flexDirection: 'row' }}>
+        <TextInput style={styles.input} onChangeText={setKey} />
+        <TextInput style={styles.input} onChangeText={setName} />
+        <Button
+          title="Add"
+          onPress={() => {
+            datalist.push({ key: key, name: name });
+            setExtra(!extra);
+          }}
+        />
+        <View style={{ width: 5 }} />
+        <Button
+          title="Del"
+          onPress={() => {
+            datalist.pop();
+            setExtra(!extra);
+          }}
+        />
+      </View>
+      <FlatList
+        data={datalist}
+        extraData={extra}
+        renderItem={({ item }) => {
+          return (
+            <View style={styles.item}>
+              <Text style={styles.age}>{item.key}</Text>
+              <Text style={styles.text}>{item.name}</Text>
+            </View>
+          );
+        }}
+      />
+    </View>
+  );
+}
+
+let datalist = [
+  { key: '01', name: 'Devin' },
+  { key: '02', name: 'Dan' },
+  { key: '03', name: 'Dominic' },
+  { key: '04', name: 'Jackson' },
+  { key: '05', name: 'James' },
+  { key: '06', name: 'Joel' },
+  { key: '07', name: 'John' },
+  { key: '08', name: 'Jilian' },
+  { key: '09', name: 'Jimmy' },
+  { key: '10', name: 'Julie' },
+  { key: '11', name: 'Jay' },
+  { key: '12', name: 'Ewha' },
+];
+
+const styles = StyleSheet.create({
+  container: { flex: 1, paddingTop: 22 },
+  item: {
+    padding: 10,
+    margin: 10,
+    flexDirection: 'row',
+    backgroundColor: 'lightblue',
+  },
+  text: { fontSize: 30, marginHorizontal: 10 },
+  age: { fontSize: 15, color: 'blue', marginVertical: 10 },
+  input: { flex: 1, fontSize: 30, borderWidth: 1, marginHorizontal: 5 },
+});
+*/
+
+/* // ch12 lab04 - add, del item
+import React, { useState } from 'react';
+import { FlatList, StyleSheet, Text, View, Button } from 'react-native';
+import { TextInput } from 'react-native-gesture-handler';
+
+export default function App() {
+  const [name, setName] = useState('');
+  const [key, setKey] = useState('');
+  return (
+    <View style={styles.container}>
+      <View style={{ margin: 10, flexDirection: 'row' }}>
+        <TextInput style={styles.input} onChangeText={setKey} />
+        <TextInput style={styles.input} onChangeText={setName} />
+        <Button
+          title="Add"
+          onPress={() => {
+            datalist.push({ key: key, name: name });
+          }}
+        />
+        <View style={{ width: 5 }} />
+        <Button
+          title="Del"
+          onPress={() => {
+            datalist.pop();
+          }}
+        />
+      </View>
+      <FlatList
+        data={datalist}
+        renderItem={({ item }) => {
+          return (
+            <View style={styles.item}>
+              <Text style={styles.age}>{item.key}</Text>
+              <Text style={styles.text}>{item.name}</Text>
+            </View>
+          );
+        }}
+      />
+    </View>
+  );
+}
+
+let datalist = [
+  { key: '01', name: 'Devin' },
+  { key: '02', name: 'Dan' },
+  { key: '03', name: 'Dominic' },
+  { key: '04', name: 'Jackson' },
+  { key: '05', name: 'James' },
+  { key: '06', name: 'Joel' },
+  { key: '07', name: 'John' },
+  { key: '08', name: 'Jilian' },
+  { key: '09', name: 'Jimmy' },
+  { key: '10', name: 'Julie' },
+  { key: '11', name: 'Jay' },
+  { key: '12', name: 'Ewha' },
+];
+
+const styles = StyleSheet.create({
+  container: { flex: 1, paddingTop: 22 },
+  item: {
+    padding: 10,
+    margin: 10,
+    flexDirection: 'row',
+    backgroundColor: 'lightblue',
+  },
+  text: { fontSize: 30, marginHorizontal: 10 },
+  age: { fontSize: 15, color: 'blue', marginVertical: 10 },
+  input: { flex: 1, fontSize: 30, borderWidth: 1, marginHorizontal: 5 },
+});
+*/
+
+/* // ch12 lab03 - 여러 데이터 넣기
+import React from 'react';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
+
+export default function App() {
+  return (
+    <View style={styles.container}>
+      <FlatList
+        data={datalist}
+        renderItem={({ item }) => {
+          return (
+            <View style={styles.item}>
+              <Text style={styles.age}>{item.key}</Text>
+              <Text style={styles.text}>{item.name}</Text>
+            </View>
+          );
+        }}
+      />
+    </View>
+  );
+}
+
+let datalist = [
+  { key: '01', name: 'Devin' },
+  { key: '02', name: 'Dan' },
+  { key: '03', name: 'Dominic' },
+  { key: '04', name: 'Jackson' },
+  { key: '05', name: 'James' },
+  { key: '06', name: 'Joel' },
+  { key: '07', name: 'John' },
+  { key: '08', name: 'Jilian' },
+  { key: '09', name: 'Jimmy' },
+  { key: '10', name: 'Julie' },
+  { key: '11', name: 'Jay' },
+  { key: '12', name: 'Ewha' },
+];
+
+const styles = StyleSheet.create({
+  container: { flex: 1, paddingTop: 22 },
+  item: {
+    padding: 10,
+    margin: 10,
+    flexDirection: 'row',
+    backgroundColor: 'lightblue',
+  },
+  text: { fontSize: 30, marginHorizontal: 10 },
+  age: { fontSize: 15, color: 'blue', marginVertical: 10 },
+});
+*/
+
+/* // ch12 lab02 - datalist는 밖으로
+import React from 'react';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
+
+export default function App() {
+  return (
+    <View style={styles.container}>
+      <FlatList
+        data={datalist}
+        renderItem={({ item }) => {
+          return <Text style={styles.item}>{item.key}</Text>;
+        }}
+      />
+    </View>
+  );
+}
+
+let datalist = [
+  { key: '01' },
+  { key: '02' },
+  { key: '03' },
+  { key: '04' },
+  { key: '05' },
+  { key: '06' },
+  { key: '07' },
+  { key: '08' },
+  { key: '09' },
+  { key: '10' },
+  { key: '11' },
+  { key: '12' },
+];
+
+const styles = StyleSheet.create({
+  container: { flex: 1, paddingTop: 22 },
+  item: {
+    padding: 10,
+    fontSize: 18,
+    height: 44,
+  },
+});
+*/
+
+/* // ch12 lab01 - FlatList
+import React from 'react';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
+
+export default function App() {
+  return (
+    <View style={styles.container}>
+      <FlatList
+        data={[
+          { key: '01' },
+          { key: '02' },
+          { key: '03' },
+          { key: '04' },
+          { key: '05' },
+          { key: '06' },
+          { key: '07' },
+          { key: '08' },
+          { key: '09' },
+          { key: '10' },
+          { key: '11' },
+          { key: '12' },
+        ]}
+        renderItem={({ item }) => {
+          return <Text style={styles.item}>{item.key}</Text>;
+        }}
+      />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, paddingTop: 22 },
+  item: {
+    padding: 10,
+    fontSize: 18,
+    height: 44,
+  },
+});
+*/
+
+/* // ch11 lab02 - move the ball : To Do
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { Accelerometer } from 'expo-sensors';
@@ -48,6 +496,7 @@ const styles = StyleSheet.create({
   buttonContainer: { margin: 10 },
   button: { fontSize: 20, color: 'blue', margin: 5 },
 });
+*/
 
 /*// ch11 lab01 - Read Accelerometer sensor
 import React, { useState, useEffect } from 'react';
