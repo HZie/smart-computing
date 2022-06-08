@@ -363,7 +363,7 @@ function MainScreen({ navigation }) {
 function EditCategoryScreen({ route, navigation }) {
   const [labels, setLabels] = useState(route.params.categories);
   const [extra, setExtra] = useState(false);
-  let currKey = route.params.lastCategoryKey;
+  let currLabelKey = route.params.lastCategoryKey;
 
   const [addItemVisible, setAddItemVisible] = useState(false);
   const [addItemVal, setAddItemVal] = useState('');
@@ -393,10 +393,10 @@ function EditCategoryScreen({ route, navigation }) {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
-                  currKey++;
+                  currLabelKey++;
                   labels.push({
                     label: addItemVal,
-                    value: { currKey },
+                    value: { currLabelKey },
                   });
                   setAddItemVisible(!addItemVisible);
                 }}
