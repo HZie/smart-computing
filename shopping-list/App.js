@@ -19,15 +19,20 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { MaterialIcons, Ionicons, FontAwesome5 } from '@expo/vector-icons';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const width = Dimensions.get('window').width;
 let isFirst = true;
+let isLoadFirst = true;
 const Stack = createStackNavigator();
+let currLabelKey = 0;
+let currKey = 0;
 
 export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+        <Stack.Screen name="Loading" component={Loading} />
         <Stack.Screen name="Shopping List" component={MainScreen} />
         <Stack.Screen name="Edit Category" component={EditCategoryScreen} />
       </Stack.Navigator>
@@ -35,15 +40,56 @@ export default function App() {
   );
 }
 
-function MainScreen({ navigation }) {
+function Loading({ navigation }) {
+  const [_labels, setLabels] = useState([{ label: 'All', value: 0 }]);
+  const [_datalist, setDatalist] = useState([]);
+
+  if (isLoadFirst) {
+    getItemFromAsync('currKey').then((res) => {
+      if (res !== null) currKey = res;
+      // get Item
+      for (let i = 0; i <= currKey; i++) {
+        getItemFromAsync('i' + i).then((res) => {
+          if (res !== null) _datalist.push(res);
+        });
+      }
+    });
+    getItemFromAsync('currLabelKey').then((res) => {
+      if (res !== null) currLabelKey = res;
+      // get Category
+      for (let i = 0; i <= currLabelKey; i++) {
+        getItemFromAsync('l' + i).then((res) => {
+          if (res !== null) _labels.push(res);
+        });
+      }
+    });
+
+    isLoadFirst = false;
+  }
+
+  setTimeout(() => {
+    navigation.reset({
+      index: 1,
+      routes: [
+        {
+          name: 'Shopping List',
+          params: { datalist: _datalist, labels: _labels },
+        },
+      ],
+    });
+  }, 1000);
+
+  return (
+    <View style={styles.centeredView}>
+      <Text style={styles.item_text}>Getting Data...</Text>
+    </View>
+  );
+}
+
+function MainScreen({ route, navigation }) {
   const [openFilter, setOpenFilter] = useState(false);
   const [filter, setFilter] = useState(0);
-  const [labels, setLabels] = useState([
-    { label: 'All', value: 0 },
-    { label: 'Grocery Store', value: 1 },
-    { label: 'Office', value: 2 },
-  ]);
-  let currLabelKey = 2;
+  const [labels, setLabels] = useState(route.params.labels);
 
   const [openCategory, setOpenCategory] = useState(false);
   const [category, setCategory] = useState(null);
@@ -54,20 +100,7 @@ function MainScreen({ navigation }) {
   const [editItem, setEditItem] = useState(null);
 
   const [extra, setExtra] = useState(false);
-  const [datalist, setDatalist] = useState([
-    { key: 0, name: 'apple', price: 1100, labelId: 1, checked: false },
-    { key: 1, name: 'banana', price: 1200, labelId: 1, checked: false },
-    { key: 2, name: 'milk', price: 1400, labelId: 1, checked: false },
-    { key: 3, name: 'yogurt', price: 1600, labelId: 1, checked: false },
-    { key: 4, name: 'pencil', price: 3700, labelId: 2, checked: false },
-    { key: 5, name: 'notepad', price: 1300, labelId: 2, checked: false },
-    { key: 6, name: 'bread', price: 5700, labelId: 1, checked: false },
-    { key: 7, name: 'basil pesto', price: 3900, labelId: 1, checked: false },
-    { key: 8, name: 'tomato', price: 2100, labelId: 1, checked: false },
-    { key: 9, name: 'bagel', price: 5600, labelId: 1, checked: false },
-    { key: 10, name: 'spinach', price: 3400, labelId: 1, checked: false },
-  ]);
-  let currKey = Number(10);
+  const [datalist, setDatalist] = useState(route.params.datalist);
   const [showList, setShowList] = useState([]);
 
   const [addItemVal, setAddItemVal] = useState('');
@@ -108,9 +141,6 @@ function MainScreen({ navigation }) {
     setShowList(newList);
   }
 
-  function findData(id, list) {
-    return list.find((d) => d.id === id);
-  }
   if (isFirst) {
     doFilter(filter);
     calculateTotal(filter);
@@ -159,6 +189,9 @@ function MainScreen({ navigation }) {
             <View style={styles.modal_button}>
               <TouchableOpacity
                 onPress={() => {
+                  setAddItemVal(null);
+                  setAddItemPrice(null);
+                  setCategory(null);
                   setAddItemVisible(!addItemVisible);
                 }}
               >
@@ -167,14 +200,22 @@ function MainScreen({ navigation }) {
               <TouchableOpacity
                 onPress={() => {
                   currKey++;
-                  datalist.push({
-                    key: { currKey },
+                  const newData = {
+                    key: currKey,
                     name: addItemVal,
                     price: Number(addItemPrice),
                     labelId: Number(category),
-                  });
+                  };
+                  setItemToAsync('currKey', currKey);
+                  setItemToAsync('i' + currKey, newData);
+                  datalist.push(newData);
+                  doFilter(filter);
                   calculateTotal(filter);
                   setAddItemVisible(!addItemVisible);
+
+                  setAddItemVal(null);
+                  setAddItemPrice(null);
+                  setCategory(null);
                 }}
               >
                 <Text style={styles.button_text}>Save</Text>
@@ -235,6 +276,7 @@ function MainScreen({ navigation }) {
                   editItem.labelId = categoryId;
                   calculateTotal(filter);
                   setEditItemVisible(!editItemVisible);
+                  setItemToAsync('i' + editItem.key, editItem);
                 }}
               >
                 <Text style={styles.button_text}>Save</Text>
@@ -312,6 +354,7 @@ function MainScreen({ navigation }) {
                     item.checked = !item.checked;
                     calculateTotal(filter);
                     setExtra(!extra);
+                    setItemToAsync('i' + item.key, item);
                   }}
                 >
                   {item.name}
@@ -322,6 +365,7 @@ function MainScreen({ navigation }) {
                     item.checked = !item.checked;
                     calculateTotal(filter);
                     setExtra(!extra);
+                    setItemToAsync('i' + item.key, item);
                   }}
                 >
                   {item.price}
@@ -345,6 +389,7 @@ function MainScreen({ navigation }) {
                     showList.splice(showList.indexOf(item), 1);
                     setDatalist(datalist);
                     setShowList(showList);
+                    removeItemFromAsync('i' + item.key).then(() => {});
                     setExtra(!extra);
                     calculateTotal(filter);
                   }}
@@ -366,7 +411,6 @@ function MainScreen({ navigation }) {
 function EditCategoryScreen({ route, navigation }) {
   const [labels, setLabels] = useState(route.params.categories);
   const [extra, setExtra] = useState(false);
-  let currLabelKey = route.params.lastCategoryKey;
 
   const [addItemVisible, setAddItemVisible] = useState(false);
   const [addItemVal, setAddItemVal] = useState('');
@@ -397,10 +441,13 @@ function EditCategoryScreen({ route, navigation }) {
               <TouchableOpacity
                 onPress={() => {
                   currLabelKey++;
-                  labels.push({
+                  setItemToAsync('currLabelKey', currLabelKey);
+                  const newData = {
                     label: addItemVal,
-                    value: { currLabelKey },
-                  });
+                    value: currLabelKey,
+                  };
+                  setItemToAsync('l' + currLabelKey, newData);
+                  labels.push(newData);
                   setAddItemVisible(!addItemVisible);
                 }}
               >
@@ -433,6 +480,7 @@ function EditCategoryScreen({ route, navigation }) {
                 onPress={() => {
                   editItem.label = editItemVal;
                   setEditItemVisible(!editItemVisible);
+                  setItemToAsync('l' + editItem.value, editItem);
                 }}
               >
                 <Text style={styles.button_text}>Save</Text>
@@ -473,6 +521,7 @@ function EditCategoryScreen({ route, navigation }) {
                 name="trash"
                 onPress={() => {
                   labels.splice(labels.indexOf(item), 1);
+                  removeItemFromAsync('l' + item.value);
                   setLabels(labels);
                   setExtra(!extra);
                 }}
@@ -484,6 +533,78 @@ function EditCategoryScreen({ route, navigation }) {
     </View>
   );
 }
+
+const isEmpty = function (value) {
+  if (
+    value === '' ||
+    value === null ||
+    value === undefined ||
+    (value !== null && typeof value === 'object' && !Object.keys(value).length)
+  ) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
+// AsyncStorage get 함수 모듈
+export const getItemFromAsync = (storageName) => {
+  if (isEmpty(storageName)) {
+    throw Error('Storage Name is empty');
+  }
+
+  return new Promise((resolve, reject) => {
+    AsyncStorage.getItem(storageName, (err, result) => {
+      if (err) {
+        reject(err);
+      }
+
+      if (result === null) {
+        resolve(null);
+      }
+
+      resolve(JSON.parse(result));
+    });
+  });
+};
+
+// AsyncStorage set 함수 모듈
+export const setItemToAsync = (storageName, item) => {
+  if (isEmpty(storageName)) {
+    throw Error('Storage Name is empty');
+  }
+
+  return new Promise((resolve, reject) => {
+    AsyncStorage.setItem(storageName, JSON.stringify(item), (error) => {
+      if (error) {
+        reject(error);
+      }
+
+      resolve('입력 성공');
+    });
+  });
+};
+
+// AsyncStorage remove 함수 모듈
+export const removeItemFromAsync = (storageName) => {
+  if (isEmpty(storageName)) {
+    throw Error('Storage Name is empty');
+  }
+
+  return new Promise((resolve, reject) => {
+    AsyncStorage.removeItem(storageName, (err, result) => {
+      if (err) {
+        reject(err);
+      }
+
+      if (result === null) {
+        resolve(null);
+      }
+
+      resolve(() => console.log('removed done'));
+    });
+  });
+};
 
 const styles = StyleSheet.create({
   // whole container
