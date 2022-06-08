@@ -32,7 +32,11 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Loading" component={Loading} />
+        <Stack.Screen
+          name="Loading"
+          component={Loading}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen name="Shopping List" component={MainScreen} />
         <Stack.Screen name="Edit Category" component={EditCategoryScreen} />
       </Stack.Navigator>
@@ -80,8 +84,10 @@ function Loading({ navigation }) {
   }, 1000);
 
   return (
-    <View style={styles.centeredView}>
-      <Text style={styles.item_text}>Getting Data...</Text>
+    <View style={[styles.centeredView, { backgroundColor: 'skyblue' }]}>
+      <Text style={{ fontSize: 30, color: 'white', fontWeight: 'bold' }}>
+        Shopping List Application
+      </Text>
     </View>
   );
 }
