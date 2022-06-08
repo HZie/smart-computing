@@ -1,4 +1,8 @@
 //Future Work: store data into the device
+// install react-native-dropdown-picker
+// install @react-navigation/native
+// install @react-navigation/stack
+// install @expo/vector-icons
 
 import React, { useState } from 'react';
 import {
@@ -17,7 +21,6 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 const width = Dimensions.get('window').width;
-const height = Dimensions.get('window').height;
 let isFirst = true;
 const Stack = createStackNavigator();
 
