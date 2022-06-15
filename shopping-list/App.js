@@ -1,4 +1,3 @@
-//Future Work: store data into the device
 // install react-native-dropdown-picker
 // install @react-navigation/native
 // install @react-navigation/stack
@@ -104,13 +103,16 @@ function MainScreen({ route, navigation }) {
   const [addItemVisible, setAddItemVisible] = useState(false);
   const [editItemVisible, setEditItemVisible] = useState(false);
   const [editItem, setEditItem] = useState(null);
+  const [editOpenCategory, setEditOpenCategory] = useState(false);
+  const [editCategory, setEditCategory] = useState(null);
+  const [editCategoryId, setEditCategoryId] = useState(null);
 
   const [extra, setExtra] = useState(false);
   const [datalist, setDatalist] = useState(route.params.datalist);
   const [showList, setShowList] = useState([]);
 
   const [addItemVal, setAddItemVal] = useState('');
-  const [addItemPrice, setAddItemPrice] = useState(0);
+  const [addItemPrice, setAddItemPrice] = useState('');
   const [editItemVal, setEditItemVal] = useState('');
   const [editItemPrice, setEditItemPrice] = useState(0);
 
@@ -163,11 +165,13 @@ function MainScreen({ route, navigation }) {
               style={styles.text_input}
               onChangeText={setAddItemVal}
               value={addItemVal}
+              placeholder="Item Name"
             />
             <TextInput
               style={styles.text_input}
               onChangeText={setAddItemPrice}
               value={addItemPrice}
+              placeholder="Price"
               keyboardType="number-pad"
             />
             <DropDownPicker
@@ -218,7 +222,6 @@ function MainScreen({ route, navigation }) {
                   doFilter(filter);
                   calculateTotal(filter);
                   setAddItemVisible(!addItemVisible);
-
                   setAddItemVal(null);
                   setAddItemPrice(null);
                   setCategory(null);
@@ -243,7 +246,7 @@ function MainScreen({ route, navigation }) {
             <TextInput
               style={styles.text_input}
               onChangeText={setEditItemPrice}
-              value={editItemPrice}
+              value={editItemPrice.toString()}
               keyboardType="number-pad"
             />
             <DropDownPicker
@@ -257,14 +260,15 @@ function MainScreen({ route, navigation }) {
                 backgroundColor: 'white',
                 borderColor: 'skyblue',
               }}
-              open={openCategory}
-              value={category}
+              open={editOpenCategory}
+              value={editCategory}
               items={labels}
-              setOpen={setOpenCategory}
+              setOpen={setEditOpenCategory}
+              setValue={setEditCategory}
               setLabels={setLabels}
               placeholder="All"
               onChangeValue={(item) => {
-                setCategoryId(item.id);
+                setEditCategoryId(item);
               }}
             />
             <View style={styles.modal_button}>
@@ -279,7 +283,7 @@ function MainScreen({ route, navigation }) {
                 onPress={() => {
                   editItem.name = editItemVal;
                   editItem.price = editItemPrice;
-                  editItem.labelId = categoryId;
+                  editItem.labelId = editCategoryId;
                   calculateTotal(filter);
                   setEditItemVisible(!editItemVisible);
                   setItemToAsync('i' + editItem.key, editItem);
@@ -435,6 +439,7 @@ function EditCategoryScreen({ route, navigation }) {
               style={styles.text_input}
               onChangeText={setAddItemVal}
               value={addItemVal}
+              placeholder="Category Name"
             />
             <View style={styles.modal_button}>
               <TouchableOpacity
