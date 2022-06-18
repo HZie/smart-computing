@@ -459,6 +459,7 @@ function EditCategoryScreen({ route, navigation }) {
                   };
                   setItemToAsync('l' + currLabelKey, newData);
                   labels.push(newData);
+                  setAddItemVal('');
                   setAddItemVisible(!addItemVisible);
                 }}
               >
